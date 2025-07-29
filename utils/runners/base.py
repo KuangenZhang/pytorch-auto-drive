@@ -4,7 +4,38 @@
 import os
 import torch
 import cv2
-from torch.utils.tensorboard import SummaryWriter
+# Allow running without the actual TensorBoard installation
+# Some environments (e.g. stripped-down containers) may miss parts of the
+# original `distutils` package required by `torch.utils.tensorboard`.  To keep
+# the training / evaluation pipeline functional we try to import
+# `SummaryWriter` and fall back to a no-op stub when that fails.
+
+try:
+    from torch.utils.tensorboard import SummaryWriter  # type: ignore
+except Exception:  # Broad except to catch missing packages or internal errors
+    class SummaryWriter:  # pylint: disable=too-few-public-methods
+        """Minimal stub that mimics the API used in this codebase when
+        TensorBoard is unavailable. All methods are implemented as no-ops so
+        the rest of the code can stay unchanged."""
+
+        def __init__(self, *args, **kwargs):  # noqa: D401, D403
+            print(
+                "[Warning] TensorBoard is not available – SummaryWriter calls "
+                "will be ignored."
+            )
+
+        def add_scalar(self, *args, **kwargs):  # noqa: D401, D403
+            pass
+
+        def add_scalars(self, *args, **kwargs):  # noqa: D401, D403
+            pass
+
+        def add_image(self, *args, **kwargs):  # noqa: D401, D403
+            pass
+
+        def close(self):  # noqa: D401, D403
+            pass
+
 from abc import ABC, abstractmethod
 
 try:
