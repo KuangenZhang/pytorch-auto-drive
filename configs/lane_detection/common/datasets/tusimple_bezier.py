@@ -7,3 +7,11 @@ dataset = dict(
     order=3,
     aux_segmentation=True
 )
+
+dataset_overfit = dict(
+    name='TuSimpleAsBezier',
+    image_set='overfit',  # Only set for training. Testing will override this value by --state.
+    root=TUSIMPLE_ROOT,
+    order=3,
+    aux_segmentation=True
+)
